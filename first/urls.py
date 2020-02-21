@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import (UserViewSet, UserReadOnlyViewSet,
+from .views import (PostViewSet, UserReadOnlyViewSet,
                     ContentPostListAPIView,
                     ContentPostDetailAPIView, post_detail,
                     PostListAPIView, PostDetailAPIView,
@@ -7,7 +7,7 @@ from .views import (UserViewSet, UserReadOnlyViewSet,
 from django.urls import path, include
 
 router = DefaultRouter()
-router.register('viewset/post', UserViewSet)
+router.register('viewset/post', PostViewSet)
 router.register('viewset/readonly/user', UserReadOnlyViewSet)
 
 urlpatterns = [
@@ -16,13 +16,12 @@ urlpatterns = [
     path('apiview/content/', ContentPostListAPIView.as_view()),
     path('apiview/content/<int:pk>/', ContentPostDetailAPIView.as_view()),
     # APIView(FBV)
-    path('fbv/apiview/content/<int:pk>/', post_detail), # 함수기반 뷰
+    path('fbv/apiview/content/<int:pk>/', post_detail),  # 함수기반 뷰
     # mixin
     path('mixin/content/', PostListAPIView.as_view()),
     path('mixin/content/<int:pk>/', PostDetailAPIView.as_view()),
     # generics
     path('generics/content/', PostListGenericsView.as_view()),
     path('generics/content/<int:pk>/', PostDetailGenericsView.as_view()),
-
 
 ]

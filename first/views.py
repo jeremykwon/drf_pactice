@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from .models import Post, ContentPost
 from .serializers import PostSerializer, ContentPostSerializer, UserSerializer
 
@@ -13,18 +14,11 @@ from rest_framework.decorators import api_view
 
 from rest_framework import mixins, generics
 
-
-# ViewSet : List Retrieve Destroy Update Create
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-
 '''
 # 원래대로라면 ViewSet 은  호출될 함수와 호출할 함수를 지정해준다
 # router 를 통해 이러한 작업 생략 가능
 user_list = UserViewSet.aS_view({
-    'get' : 'list',
+    'get' : 'list', # get 요청이면 이렇게 하겠다 매핑
 })
 user_detail = UserViewSet.aS_view({
     'get' : 'retrieve',
@@ -34,6 +28,45 @@ user_detail = UserViewSet.aS_view({
 path('user', user_list)
 path('user/<int:pk>', user_detail)
 '''
+
+
+# ViewSet : List Retrieve Destroy Update Create
+# 아래 함수들과 상관없이 /viewset/post/<pk>/ 로 접근시 patch, put, delete가 구현되어 있다.
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    # uri에 ?search= 가 있는 경우에 대한 queryset 필터처리
+    def get_queryset(self):
+        queryset = self.queryset
+        search = self.request.query_params.get('search', '')
+        if search:
+            queryset = self.queryset.filter(text__icontains='포함')
+        return queryset
+
+    # [GET] viewset / post / custom_route 로 접근시
+    # list 필터링 (List)
+    @action(detail=False)  # list 단위
+    def custom_route(self, request):
+        '''
+        [커스텀] '포함' 이 포함된 것을 찾는다.
+        '''
+        qs = self.queryset.filter(text__icontains='포함')
+        serializer = self.get_serializer(qs, many=True)  # self.serializer_class(qs, many=True) 와 같은 가능
+        return Response(serializer.data)
+
+    # [PATCH] viewset / post / <pk> /custom_route_detail 로 접근시
+    # 내용을 변경한다. (Update)
+    @action(detail=True, methods=['patch'])  # detail 단위, 받을 메소드 설정
+    def custom_route_detail(self, request, pk):
+        '''
+        [커스텀] 일부 내용 변경
+        '''
+        instance = self.get_object()
+        instance.text = request.POST['text']
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 # ReadOnly ViewSet : List Retrieve
