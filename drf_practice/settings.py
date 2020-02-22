@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'first.apps.FirstConfig',
     'filter.apps.FilterConfig',
+    'perform.apps.PerformConfig',
     'rest_framework'
 ]
 
@@ -128,5 +129,10 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
         # 지우면 HTML renderer 는 지원하지 않는다. (format)
-    ]
+    ],
+
+    # 아래의 default paging 옵션을 추가하면 전역에서 적용된다.
+    # 정렬을 하지 않은 상태로 사용하면 오류가 뜨는데 models 혹은 views 에서 정렬을 해주면 해결된다.
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 3,  # view 별로 설정 가능하지만 default 지정 한것
 }
