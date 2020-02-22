@@ -20,6 +20,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('api-auth/', include('rest_framework.urls')),  # drf 기본 로그인 기능
+
     path('', include('first.urls')),
     path('filter', include('filter.urls')),
     path('perform', include('perform.urls')),
