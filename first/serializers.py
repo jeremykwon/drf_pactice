@@ -17,5 +17,6 @@ class ContentPostSerializer(ModelSerializer):
 
 class UserSerializer(ModelSerializer):
     class Meta:
-        model = get_user_model
-        fields = ['pk', 'username']
+        model = get_user_model()
+        read_only_fields = ('pk', 'username')
+        fields = read_only_fields + ('email', 'is_superuser')
