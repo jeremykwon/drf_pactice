@@ -1,18 +1,23 @@
 from first.models import Post
 from rest_framework.viewsets import ModelViewSet
 from .serializers import PostSerializer
+from .pagination import PostPagination
 
 from rest_framework.filters import SearchFilter
 
 
+# filter, pagination
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+    pagination_class = PostPagination  # 페이지네이션 클래스 커스텀 정의
     
     # ?search 로써 (search 인자를 포함하여 요청시) 검색이 가능하다
     filter_backends = [SearchFilter]
     search_fields = ['text', 'id']  # id, text 를 검색 가능하도록.
 
+    '''
     def get_queryset(self):
         qs = super().get_queryset()  # 정의한 쿼리셋 획득
         # 자신의 글만 보여줌
@@ -21,3 +26,4 @@ class PostViewSet(ModelViewSet):
         else:
             qs = qs.none()  # 비어있다.
         return qs
+    '''
