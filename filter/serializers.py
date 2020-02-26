@@ -7,6 +7,7 @@ class PostSerializer(ModelSerializer):
     class Meta:
         model = Post
         fields = '__all__'
+
     # 모델 단에서 정의해주는 것이 맞지만 해당
     # 시리얼라이저 에서만 적용하고 싶은 경우 사용
     # text 필드에 대해서만 validate (정해진 형식이다)
