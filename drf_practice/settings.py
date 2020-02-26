@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = '&a3$)z**_1ujzqp_6ng%t75@9%2&cfj57gew3@ct09lo9l8zv%'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -73,7 +71,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'drf_practice.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -83,7 +80,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -103,7 +99,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -116,7 +111,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -135,4 +129,19 @@ REST_FRAMEWORK = {
     # 정렬을 하지 않은 상태로 사용하면 오류가 뜨는데 models 혹은 views 에서 정렬을 해주면 해결된다.
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 3,  # view 별로 설정 가능하지만 default 지정 한것
+
+    # 현재 프로젝트 내의 모든 뷰에 대해서 호출 횟수가 기본값으로 지정된다.
+    # AnonRateThrottle, UserRateThrottle, ScopedRateThrottle 가 있다.
+    'DEFAULT_THROTTLE_CLASSES': [
+        # 인증된 유저는 user_id, 비인증 유저는 IP별로 횟수 제한
+        # 'rest_framework.throttling.UserRateThrottle',  # (전역 세팅) user scope 를 찾으며 값은 아래에 정의되어 있다.
+        # 각 APIView 별로 다른 Scope 를 적용하는 경우의 문법이다.
+        'rest_framework.throttling.ScopedRateThrottle',  # 전역이 아닌 앱별 세팅을 원하므로 비워두는 것이 맞지만 대체 방법
+
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '10/d',  # 하루 10회 호출 가능 (기본값)
+        'custom': '1/d,',  # 하루 1회  호출가능 (뷰 별로 다른 값을 제공하기 위한 커스텀값)
+        'custom2': '1/s',  # 초당 1회 (뷰 별로 다른 값을 제공하기 위한 커스텀값)
+    },
 }
