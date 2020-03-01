@@ -33,5 +33,6 @@ class PerformPostViewSet(ModelViewSet):
     # 현재 유저와 IP 주소를 저장
     # serializer.save()를 호출하면 validation 된 데이터들과
     # 지정해준 **kwargs 값들이 합쳐져서 저장된다.
+    # Create 재정의
     def perform_create(self, serializer):
         serializer.save(ip=self.get_client_ip(), author=self.request.user)

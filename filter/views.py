@@ -23,9 +23,11 @@ class PostViewSet(ModelViewSet):
 
     # 각 뷰별로 접근 제한을 지정 하는 방법(1)
     # throttle_classes = UserRateThrottle
+
     # 각 뷰별로 접근 제한을 지정하는 방법(2) -> 코드가 조금더 간단해진다.
     # setting.py에 지정되어 있다.
-    throttle_scope = 'custom'
+    # throttle_scope = 'custom'
+
     # 각 유저별로 접근 제한
     # (커스텀) 현재는 profile 과 is_premium 을 구현하지 않아 사용 불가
     # throttle_classes = [UserCustomRateThrottle]

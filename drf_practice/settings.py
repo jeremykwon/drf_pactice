@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+import datetime
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -35,9 +35,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework.authtoken',  # token 모델 사용을 위한 것이며 사용시  migrate 가 필요하다.
     'first.apps.FirstConfig',
     'filter.apps.FilterConfig',
     'perform.apps.PerformConfig',
+    'api.apps.ApiConfig',
     'rest_framework'
 ]
 
@@ -140,8 +142,29 @@ REST_FRAMEWORK = {
 
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'user': '10/d',  # 하루 10회 호출 가능 (기본값)
+        'user': '100/d',  # 하루 100회 호출 가능 (기본값)
         'custom': '1/d,',  # 하루 1회  호출가능 (뷰 별로 다른 값을 제공하기 위한 커스텀값)
         'custom2': '1/s',  # 초당 1회 (뷰 별로 다른 값을 제공하기 위한 커스텀값)
     },
+
+    # 전역에 IsAuthenticated 옵션 적용
+    'DEFAULT_PERMISSION_CLASSES': {
+        'rest_framework.permissions.IsAuthenticated',
+    },
+    # 기본적으로 basic 과 session 인증이 적용되지만 토큰인증을 추가해 준것이다 ( 필요한가? )
+    'DEFAULT_AUTHENTICATION_CLASSES': {
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',  # django 토큰
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',  # jwt
+    }
+}
+
+JWT_AUTH = {
+    'JWT_SECRET_KEY': SECRET_KEY,  # 커스텀 가능 ( 시크릿 키는 따로 보관해서 깃에 안올라 가도록 해야할 것으로 보임)
+    'JWT_ALGORITHM': 'HS256',  # 건들필요 X
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),  # 토큰 지속 기본 5분
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=28),  # JWT 토큰 갱신의 유효기간
+    # └>( 열심히 갱신해도 이 기간이 지나면 로그아웃 처리된다 )
+    'JWT_ALLOW_REFRESH': True,  # JWT 토큰을 갱신할 수 있게 할지 여부
 }

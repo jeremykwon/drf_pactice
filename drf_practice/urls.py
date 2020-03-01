@@ -14,16 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
 from django.urls import path, include
+from rest_framework.authtoken.views import obtain_auth_token
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
     path('api-auth/', include('rest_framework.urls')),  # drf 기본 로그인 기능
+    path('api-token-auth/', obtain_auth_token),  # drf 토큰 받아오는 기능(POST 만 지원)
 
     path('', include('first.urls')),
     path('filter', include('filter.urls')),
     path('perform', include('perform.urls')),
+    path('api', include('api.urls')),
 ]
